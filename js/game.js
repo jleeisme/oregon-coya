@@ -37,6 +37,32 @@ Oregon.Game.init = function(){
     firepower: 2
   });
 
-}
+  // pass references
+  this.caravan.ui = this.ui;
+  this.caravan.eventManager = this.eventManager;
+
+  this.ui.game = this;
+  this.ui.caravan = this.caravan;
+  this.ui.eventManager = this.eventManager;
+
+  this.eventManager.game = this;
+  this.eventManager.caravan = this.caravan;
+  this.eventManager.ui = this.ui;
+
+  // start!
+  this.startJourney();
+};
+
+// start journey and time starts
+Oregon.Game.startJourney = function(){
+  this.gameActive = true;
+  this.previousTime = null;
+  this.ui.notify('The adventure begins', 'positive');
+
+  this.step();
+};
+
+// game loop
+Oregon.Game.step
 
 Oregon.Game.init();
