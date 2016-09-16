@@ -63,6 +63,72 @@ Oregon.Game.startJourney = function(){
 };
 
 // game loop
-Oregon.Game.step
+Oregon.Game.step = function(timestamp) {
 
+  // starting, setup the previous time for the first time
+  if(!this.previousTime){
+    this.previousTime = timestamp;
+    this.updateGame();
+  }
+
+  if(this.gameActive) window.requestAnimationFrame(this.step.bind(this));
+};
+
+// update game stats
+Oregon.game.updateGame = function() {
+  
+  // day update
+  this.caravan.day += Oregon.DAY_PER_STEP;
+
+  // food update
+  this.caravan.consumeFood();
+
+  if(this.caravan.food === 0) {
+    this.ui.notify('Your caravan starved to death', 'negative');
+    this.gameActive = false;
+    return;
+  }
+
+  // update weight
+  this.caravan.updateWeight();
+
+  // update progress/distance
+  this.caravan.updateDistance();
+
+  // show stats
+  this.ui.refreshStats();
+
+  // check for deaths
+  if(this.caravan.crew <= 0) {
+    this.caravan.crew = 0;
+    this.ui.notify('Everyone died', 'negative');
+    this.gameActive = false;
+    return;
+  }
+
+  // check if win?
+  if(this.caravan.distance >= Oregon.FINAL_DISTANCE) {
+    this.ui.notify('Everyone died', 'negative');
+    this.gameActive = false;
+    return;
+  }
+
+  // random events
+  if(Math.random() <= Oregon.EVENT_PROBABILITY) {
+    this.eventManager.generateEvent();
+  }
+};
+
+// pause journey
+Oregon.Game.pauseJourney = function() {
+  this.gameActive = false;
+};
+
+// resume journey
+Oregon.Game.resumeJourney = function() {
+  this.gameActive = true;
+  this.step();
+};
+
+// init game
 Oregon.Game.init();
