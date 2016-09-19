@@ -71,6 +71,15 @@ Oregon.Game.step = function(timestamp) {
     this.updateGame();
   }
 
+  // time difference
+  var progress = timeStamp - this.previousTime;
+
+  // game update
+  if(progress >= Oregon.GAME_SPEED) {
+    this.previousTime = timestamp;
+    this.updateGame();
+  }
+
   if(this.gameActive) window.requestAnimationFrame(this.step.bind(this));
 };
 
